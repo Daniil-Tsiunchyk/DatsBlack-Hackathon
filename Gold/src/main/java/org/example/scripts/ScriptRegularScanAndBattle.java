@@ -89,7 +89,7 @@ public class ScriptRegularScanAndBattle {
         }
         
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
-        int speed;
+
         // Стреляем по первому вражескому кораблю в радиусе
         for (ScanResult.Ship myShip : myShips) {
 
@@ -103,12 +103,8 @@ public class ScriptRegularScanAndBattle {
                 System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
                 ShootJson shootJson = new ShootJson();
                 shootJson.setId(myShip.getId());
-                if (myShip.getSpeed() <= 0) {
-                    speed = 0;
-                } else {
-                    speed = -1;
-                }
-                shootJson.setChangeSpeed(speed);
+
+
                 shootJson.setCannonShoot(closestEnemy.get());
                 resultShootJsonShips.getShips().add(shootJson);
             }
@@ -131,7 +127,7 @@ public class ScriptRegularScanAndBattle {
     public static class ShootJson {
         private int id;
         private ShootClass cannonShoot;
-        private int changeSpeed;
+
     }
 
 
