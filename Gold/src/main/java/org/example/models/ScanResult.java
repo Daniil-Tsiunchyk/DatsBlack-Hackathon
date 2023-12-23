@@ -2,8 +2,6 @@ package org.example.models;
 
 import lombok.Data;
 
-import java.util.Map;
-
 @Data
 public class ScanResult {
     private ScanData scan;
