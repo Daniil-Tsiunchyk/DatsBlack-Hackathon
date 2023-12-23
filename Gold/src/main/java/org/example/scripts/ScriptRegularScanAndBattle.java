@@ -3,6 +3,7 @@ package org.example.scripts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.models.ScanResult;
 
@@ -19,12 +20,12 @@ import java.util.stream.Collectors;
 import static org.example.Const.*;
 
 
-public class ScriptRegularScan {
-    private final static int DISTANCE_SCAN=20;
+public class ScriptRegularScanAndBattle {
 
     public static void main(String[] args) {
         startRegularScans();
     }
+
     public static void shoootingAPI(ResultShootJsonShips resultShootJsonShips) throws IOException, InterruptedException {
         // Преобразование объекта в JSON-строку
         ObjectMapper objectMapper = new ObjectMapper();
@@ -41,6 +42,7 @@ public class ScriptRegularScan {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Результат: " + parseResponse(response.body()));
     }
+
     private static String parseResponse(String responseBody) {
         ScriptRegister.Response response = gson.fromJson(responseBody, ScriptRegister.Response.class);
         return response.toString();
@@ -48,7 +50,7 @@ public class ScriptRegularScan {
 
     public static void startRegularScans() {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(ScriptRegularScan::scanAndPrint, 0, 5, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(ScriptRegularScanAndBattle::scanAndPrint, 0, 5, TimeUnit.SECONDS);
     }
 
     private static void scanAndPrint() {
@@ -66,9 +68,8 @@ public class ScriptRegularScan {
             System.out.println("Обработанный результат сканирования: \n" + prettyJson);
 
 
-
-            if(scanResult.getScan().getEnemyShips().length!=0){
-                System.out.println("Рядом есть вражеские игроки: "+scanResult.getScan().getEnemyShips());
+            if (scanResult.getScan().getEnemyShips().length != 0) {
+                System.out.println("Рядом есть вражеские игроки: " + Arrays.toString(scanResult.getScan().getEnemyShips()));
 
                 ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
                 shoootingAPI(ships);
@@ -78,66 +79,25 @@ public class ScriptRegularScan {
         }
     }
 
-    private static ResultShootJsonShips battle(ScanResult.Ship[] myShips,ScanResult.Ship[] enemyShips) {
+    private static ResultShootJsonShips battle(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
         System.out.println("Бой начинается!");
 
-        // Создаем список для хранения выстрелов
-        List<ShootData> shoots = new ArrayList<>();
-
-        // Перебираем каждый из ваших кораблей
-        for (ScanResult.Ship myShip : myShips) {
-            ShootData shootData = new ShootData();
-            shootData.setId(myShip.getId());
-            // Проверяем, есть ли вражеские корабли в радиусе 20
-            for (ScanResult.Ship enemyShip : enemyShips) {
-                int distance = calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY());
-
-                if (distance <= DISTANCE_SCAN) {
-                    System.out.println("Корабль вражеский: "+enemyShip);
-                    ShootClass shoot = new ShootClass();
-
-
-                    shoot.setX(enemyShip.getX());
-                    shoot.setY(enemyShip.getY());
-                    shoot.setHp(enemyShip.getHp());
-                    shootData.getShootClassList().add(shoot);
-                }
-            }
-            shoots.add(shootData);
-        }
-
-
-        Set<ShootClass> uniqueCoordinatesSet = new HashSet<>();
-        for (ShootData data:
-                shoots) {
-            uniqueCoordinatesSet.addAll(data.getShootClassList());
-        }
-
-
-
-        List<ShootClass> uniqueCoordinatesList = uniqueCoordinatesSet.stream()
-                .distinct()
-                .sorted(Comparator.comparingInt(ShootClass::getHp))
-                .collect(Collectors.toList());
-
-
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
-        for (ShootData data:
-                shoots) {
 
-            if (!data.getShootClassList().isEmpty()){
-                ShootJson shootJson= new ShootJson();
-                shootJson.setId(data.id);
-                shootJson.setCannonShoot(data.getShootClassList().getFirst());
-                data.setShootClassList( data.getShootClassList().subList(0, 1));
-                System.out.println("Выстрел:");
-                System.out.println(shootJson);
+        // Стреляем по первому вражескому кораблю в радиусе
+        for (ScanResult.Ship myShip : myShips) {
+            Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
+                    .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
+                    .min(Comparator.comparingInt(ScanResult.Ship::getHp))
+                    .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
+
+            if (closestEnemy.isPresent()) {
+                System.out.println("Бабах!");
+                ShootJson shootJson = new ShootJson();
+                shootJson.setId(myShip.getId());
+                shootJson.setCannonShoot(closestEnemy.get());
                 resultShootJsonShips.getShips().add(shootJson);
             }
-            else{
-                shoots.remove(data);
-            }
-
         }
 
         System.out.println("Бой заканчивается!");
@@ -149,28 +109,25 @@ public class ScriptRegularScan {
     }
 
     @Data
-    public static class ResultShootJsonShips{
-        List<ShootJson> ships=new ArrayList<>();
+    public static class ResultShootJsonShips {
+        List<ShootJson> ships = new ArrayList<>();
     }
 
     @Data
-    public static class ShootJson{
+    public static class ShootJson {
         private int id;
         private ShootClass cannonShoot;
     }
 
 
     @Data
-    private static class ShootData{
-        private int id;
-        private List<ShootClass> shootClassList = new ArrayList<>();
-    }
-    @Data
-    public static class ShootClass{
+    @AllArgsConstructor
+    public static class ShootClass {
 
         private int x;
         private int y;
         private int hp;
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -184,5 +141,4 @@ public class ScriptRegularScan {
             return Objects.hash(x, y);
         }
     }
-
 }
