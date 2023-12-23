@@ -4,44 +4,16 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-// Класс для работы с API
+import static org.example.Const.*;
+
 public class GameApiService {
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final String apiKey;
-    private final Gson gson = new Gson();
-    private final String baseUrl = "https://datsblack.datsteam.dev/api/";
+    public final String apiKey;
 
     public GameApiService(String apiKey) {
         this.apiKey = apiKey;
-    }
-
-
-    public void registerForDeathMatch() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "deathMatch/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Register for DeathMatch: " + response.body());
-    }
-
-    public void exitDeathMatch() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "deathMatch/exitBattle")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Exit DeathMatch: " + response.body());
-    }
-
-    public void registerForRoyalBattle() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "royalBattle/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Register for Royal Battle: " + response.body());
     }
 
     public void sendShipCommands(ShipCommand[] commands) throws IOException, InterruptedException {
@@ -75,28 +47,4 @@ public class GameApiService {
             this.ships = ships;
         }
     }
-
-    public void startRegularScans() {
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(this::scanAndPrint, 0, 5, TimeUnit.SECONDS);
-    }
-
-    private void scanAndPrint() {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + "scan"))
-                    .header("X-API-Key", apiKey)
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("Ответ сервера: " + response.body());
-
-            ScanResult scanResult = gson.fromJson(response.body(), ScanResult.class);
-            System.out.println(scanResult);
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Ошибка при выполнении сканирования: " + e.getMessage());
-        }
-    }
-
 }

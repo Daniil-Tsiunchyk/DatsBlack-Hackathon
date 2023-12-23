@@ -1,11 +1,11 @@
-package org.example;
+package org.example.models;
 
 import lombok.Data;
 
 import java.util.Map;
 
 @Data
-class ScanResult {
+public class ScanResult {
     private ScanData scan;
     private boolean success;
     private Error[] errors;
