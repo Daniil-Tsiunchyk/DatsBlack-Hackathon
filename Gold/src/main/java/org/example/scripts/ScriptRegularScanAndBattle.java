@@ -72,7 +72,7 @@ public class ScriptRegularScanAndBattle {
                 System.out.println("Рядом есть вражеские игроки: " + Arrays.toString(scanResult.getScan().getEnemyShips()));
 
                 ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
-                if(!ships.getShips().isEmpty()){
+                if (!ships.getShips().isEmpty()) {
                     shoootingAPI(ships);
 
                 }
@@ -96,14 +96,13 @@ public class ScriptRegularScanAndBattle {
                     .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
 
             if (closestEnemy.isPresent()) {
-                System.out.println("Бабах!");
+                System.out.println("Бабах!" + myShip.getId());
                 ShootJson shootJson = new ShootJson();
                 shootJson.setId(myShip.getId());
-                if(myShip.getSpeed()<=0){
-                    speed=0;
-                }
-                else{
-                    speed=-1;
+                if (myShip.getSpeed() <= 0) {
+                    speed = 0;
+                } else {
+                    speed = -1;
                 }
                 shootJson.setChangeSpeed(speed);
                 shootJson.setCannonShoot(closestEnemy.get());
@@ -114,6 +113,7 @@ public class ScriptRegularScanAndBattle {
         System.out.println("Бой заканчивается!");
         return resultShootJsonShips;
     }
+
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
         return (int) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
