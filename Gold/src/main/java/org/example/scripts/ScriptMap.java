@@ -109,6 +109,7 @@ public class ScriptMap {
         }
 
         private void drawIsland(Graphics g, Island island) {
+            g.setColor(Color.BLACK);
             int[][] map = island.getMap();
             List<Integer> start = island.getStart();
             int startX = start.get(0) / 2;
