@@ -23,26 +23,26 @@ public class ScriptMap {
     public static void main(String[] args) {
         frame = new JFrame("Battle Map");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        updateMap();
-        Timer timer = new Timer(1000, e -> updateMap());
+        frame.setPreferredSize(new Dimension(1000, 1000));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        Timer timer = new Timer(5000, e -> updateMap());
         timer.start();
+        updateMap();
     }
 
     private static void updateMap() {
         try {
             BattleMap battleMap = fetchBattleMap();
             ScanResult scanResult = fetchScanResult();
-            ScanResult.Ship[] myShips = scanResult.getScan().getMyShips();
-            ScanResult.Ship[] enemyShips = scanResult.getScan().getEnemyShips();
 
-            mapDrawer = new MapDrawer(battleMap, myShips, enemyShips);
+            mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
             frame.getContentPane().removeAll();
             frame.getContentPane().add(mapDrawer);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-
-            mapDrawer.repaint();
+            frame.revalidate();
+            frame.repaint();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -71,15 +71,6 @@ public class ScriptMap {
         return gson.fromJson(response.body(), ScanResult.class);
     }
 
-    private static void createAndShowGui(BattleMap battleMap, ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
-        JFrame frame = new JFrame("Battle Map");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new MapDrawer(battleMap, myShips, enemyShips));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
     private static class MapDrawer extends JPanel {
         private final BattleMap battleMap;
         private final ScanResult.Ship[] myShips;
@@ -104,6 +95,7 @@ public class ScriptMap {
                     drawIsland(g, island);
                 }
             }
+            drawBorder(g);
         }
 
         private void drawShips(Graphics g, ScanResult.Ship[] ships, Color color) {
@@ -139,6 +131,12 @@ public class ScriptMap {
             for (int i = 0; i <= getHeight(); i += gridSize) {
                 g.drawLine(0, i, getWidth(), i);
             }
+        }
+
+        private void drawBorder(Graphics g) {
+            g.setColor(Color.BLACK);
+            ((Graphics2D) g).setStroke(new BasicStroke(3));
+            g.drawRect(0, 0, 1000, 1000);
         }
     }
 }
