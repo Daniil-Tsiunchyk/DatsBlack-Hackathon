@@ -84,7 +84,7 @@ public class ScriptMap {
         private final BattleMap battleMap;
         private final ScanResult.Ship[] myShips;
         private final ScanResult.Ship[] enemyShips;
-        private final int gridSize = 50;
+        private final int gridSize = 25;
 
         public MapDrawer(BattleMap battleMap, ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
             this.battleMap = battleMap;
@@ -100,20 +100,9 @@ public class ScriptMap {
             if (battleMap != null) {
                 drawShips(g, myShips, Color.BLUE);
                 drawShips(g, enemyShips, Color.RED);
-                drawShipRadius(g, myShips, Color.BLUE);
-                drawShipRadius(g, enemyShips, Color.RED);
                 for (Island island : battleMap.getIslands()) {
                     drawIsland(g, island);
                 }
-            }
-        }
-
-        private void drawShipRadius(Graphics g, ScanResult.Ship[] ships, Color color) {
-            g.setColor(color);
-            for (ScanResult.Ship ship : ships) {
-                int x = ship.getX() / 2; // Учитываем масштабирование и смещаем центр окружности
-                int y = ship.getY() / 2; // Учитываем масштабирование и смещаем центр окружности
-                g.drawOval(x, y, 20, 20); // Рисуем окружность с радиусом 20 (диаметр 40)
             }
         }
 
@@ -122,7 +111,8 @@ public class ScriptMap {
             for (ScanResult.Ship ship : ships) {
                 int x = ship.getX() / 2;
                 int y = ship.getY() / 2;
-                g.fillOval(x, y, 3, 3);
+                g.fillOval(x - 5, y - 5, 10, 10);
+                g.drawOval(x - 20, y - 20, 40, 40);
             }
         }
 
