@@ -83,14 +83,20 @@ public class ScriptRegularScanAndBattle {
         System.out.println("Бой начинается!");
 
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
-
+        int speed;
         // Стреляем по первому вражескому кораблю в радиусе
         for (ScanResult.Ship myShip : myShips) {
+            if(myShip.getSpeed()<=0){
+                speed=0;
+            }
+            else{
+                speed=-1;
+            }
             Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
                     .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
                     .min(Comparator.comparingInt(ScanResult.Ship::getHp))
                     .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
-
+            closestEnemy.get().setChangeSpeed(speed);
             if (closestEnemy.isPresent()) {
                 System.out.println("Бабах!");
                 ShootJson shootJson = new ShootJson();
@@ -123,10 +129,16 @@ public class ScriptRegularScanAndBattle {
     @Data
     @AllArgsConstructor
     public static class ShootClass {
+        public ShootClass(int x, int y, int hp) {
+            this.x = x;
+            this.y = y;
+            this.hp = hp;
+        }
 
         private int x;
         private int y;
         private int hp;
+        private int changeSpeed =-1;
 
         @Override
         public boolean equals(Object obj) {
