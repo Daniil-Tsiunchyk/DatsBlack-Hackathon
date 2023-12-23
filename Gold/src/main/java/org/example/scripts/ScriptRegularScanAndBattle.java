@@ -40,7 +40,7 @@ public class ScriptRegularScanAndBattle {
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-      System.out.println("Результат: " + parseResponse(response.body()));
+//        System.out.println("Результат: " + parseResponse(response.body()));
     }
 
     private static String parseResponse(String responseBody) {
@@ -87,31 +87,29 @@ public class ScriptRegularScanAndBattle {
         for (ScanResult.Ship enemyShip : enemyShips) {
             enemyShip.move();
         }
-
-
+        
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
 
         // Стреляем по первому вражескому кораблю в радиусе
         for (ScanResult.Ship myShip : myShips) {
-            if (myShip.getCannonCooldownLeft()==0){
-
 
             Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
                     .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
                     .min(Comparator.comparingInt(ScanResult.Ship::getHp))
                     .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
 
-
             if (closestEnemy.isPresent()) {
 
                 System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
                 ShootJson shootJson = new ShootJson();
                 shootJson.setId(myShip.getId());
+
+
                 shootJson.setCannonShoot(closestEnemy.get());
                 resultShootJsonShips.getShips().add(shootJson);
             }
-            }
         }
+
         System.out.println("\n");
         return resultShootJsonShips;
     }
@@ -131,9 +129,12 @@ public class ScriptRegularScanAndBattle {
         private ShootClass cannonShoot;
 
     }
+
+
     @Data
     @AllArgsConstructor
     public static class ShootClass {
+
 
         private int x;
         private int y;
