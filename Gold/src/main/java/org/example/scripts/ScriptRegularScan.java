@@ -1,5 +1,6 @@
 package org.example.scripts;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Data;
@@ -17,11 +18,32 @@ import java.util.stream.Collectors;
 
 import static org.example.Const.*;
 
+
 public class ScriptRegularScan {
     private final static int DISTANCE_SCAN=20;
 
     public static void main(String[] args) {
         startRegularScans();
+    }
+    public static void shoootingAPI(ResultShootJsonShips resultShootJsonShips) throws IOException, InterruptedException {
+        // Преобразование объекта в JSON-строку
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(resultShootJsonShips);
+        System.out.println(requestBody);
+        // Создание POST-запроса с передачей тела запроса
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "shipCommand"))
+                .header("X-API-Key", apiKey)
+                .header("Content-Type", "application/json") // Указываем тип контента как JSON
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Результат: " + parseResponse(response.body()));
+    }
+    private static String parseResponse(String responseBody) {
+        ScriptRegister.Response response = gson.fromJson(responseBody, ScriptRegister.Response.class);
+        return response.toString();
     }
 
     public static void startRegularScans() {
@@ -48,14 +70,15 @@ public class ScriptRegularScan {
             if(scanResult.getScan().getEnemyShips().length!=0){
                 System.out.println("Рядом есть вражеские игроки: "+scanResult.getScan().getEnemyShips());
 
-                battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
+                ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
+                shoootingAPI(ships);
             }
         } catch (IOException | InterruptedException e) {
             System.err.println("Ошибка при выполнении сканирования: " + e.getMessage());
         }
     }
 
-    private static void battle(ScanResult.Ship[] myShips,ScanResult.Ship[] enemyShips) {
+    private static ResultShootJsonShips battle(ScanResult.Ship[] myShips,ScanResult.Ship[] enemyShips) {
         System.out.println("Бой начинается!");
 
         // Создаем список для хранения выстрелов
@@ -98,14 +121,18 @@ public class ScriptRegularScan {
                 .collect(Collectors.toList());
 
 
-
+        ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
         for (ShootData data:
                 shoots) {
 
             if (!data.getShootClassList().isEmpty()){
+                ShootJson shootJson= new ShootJson();
+                shootJson.setId(data.id);
+                shootJson.setCannonShoot(data.getShootClassList().getFirst());
                 data.setShootClassList( data.getShootClassList().subList(0, 1));
                 System.out.println("Выстрел:");
-                System.out.println(data);
+                System.out.println(shootJson);
+                resultShootJsonShips.getShips().add(shootJson);
             }
             else{
                 shoots.remove(data);
@@ -113,13 +140,23 @@ public class ScriptRegularScan {
 
         }
 
-
-
         System.out.println("Бой заканчивается!");
+        return resultShootJsonShips;
     }
 
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
         return (int) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    @Data
+    public static class ResultShootJsonShips{
+        List<ShootJson> ships=new ArrayList<>();
+    }
+
+    @Data
+    public static class ShootJson{
+        private int id;
+        private ShootClass cannonShoot;
     }
 
 
