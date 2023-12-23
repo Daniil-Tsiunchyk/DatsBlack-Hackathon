@@ -9,7 +9,7 @@ public class ScanResult {
     private Error[] errors;
 
     @Data
-   public static class ScanData {
+    public static class ScanData {
         private Ship[] myShips;
         private Ship[] enemyShips;
         private Zone zone;
@@ -24,16 +24,10 @@ public class ScanResult {
         private int y;
         private int size;
         private int hp;
-        private int maxHp;
         private String direction;
         private int speed;
-        private int maxSpeed;
-        private int minSpeed;
-        private int maxChangeSpeed;
         private int cannonCooldown;
         private int cannonCooldownLeft;
-        private int cannonRadius;
-        private int scanRadius;
         private int cannonShootSuccessCount;
 
     }

@@ -1,7 +1,10 @@
 package org.example.scripts;
 
-import lombok.Data;
+import org.example.models.BattleMap.BattleMap;
+import org.example.models.BattleMap.Island;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -14,64 +17,62 @@ public class ScriptMap {
     public static void main(String[] args) {
         try {
             BattleMap battleMap = fetchBattleMap();
-            System.out.println(battleMap);
+            SwingUtilities.invokeLater(() -> createAndShowGui(battleMap));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private static BattleMap fetchBattleMap() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(mapUrl)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(mapUrl))
+                .GET()
+                .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return gson.fromJson(response.body(), BattleMap.class);
     }
 
-    @Data
-    static class BattleMap {
-        private int width;
-        private int height;
-        private List<Island> islands;
-
-        @Override
-        public String toString() {
-            return "BattleMap{" + "width=" + width + ", height=" + height + ", islands=" + islands + '}';
-        }
+    private static void createAndShowGui(BattleMap battleMap) {
+        JFrame frame = new JFrame("Battle Map");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(new MapDrawer(battleMap));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
-    @Data
-    public class Island {
-        private int[][] map;
-        private List<Integer> start;
+    private static class MapDrawer extends JPanel {
+        private final BattleMap battleMap;
 
-        @Override
-        public String toString() {
-            return "Island{" + "map=" + arrayToString(map) + ", start=" + start + '}';
+        public MapDrawer(BattleMap battleMap) {
+            this.battleMap = battleMap;
+            setPreferredSize(new Dimension(2000, 2000));
         }
 
-        private String arrayToString(int[][] array) {
-            StringBuilder sb = new StringBuilder();
-            for (int[] row : array) {
-                sb.append("[");
-                for (int cell : row) {
-                    sb.append(cell).append(",");
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (battleMap != null) {
+                for (Island island : battleMap.getIslands()) {
+                    drawIsland(g, island);
                 }
-                sb.deleteCharAt(sb.length() - 1);
-                sb.append("], ");
             }
-            return sb.toString();
         }
 
-    }
+        private void drawIsland(Graphics g, Island island) {
+            int[][] map = island.getMap();
+            List<Integer> start = island.getStart();
+            int startX = start.get(0);
+            int startY = start.get(1);
 
-    @Data
-    static class Coordinate {
-        private int x;
-        private int y;
-
-        @Override
-        public String toString() {
-            return "Coordinate{" + "x=" + x + ", y=" + y + '}';
+            for (int i = 0; i < map.length; i++) {
+                for (int j = 0; j < map[i].length; j++) {
+                    if (map[i][j] == 1) {
+                        g.fillRect(startX + j * 1, startY + i * 1, 1, 1);
+                    }
+                }
+            }
         }
     }
 }
