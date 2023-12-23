@@ -16,6 +16,7 @@ public class GameApiService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final String apiKey;
     private final Gson gson = new Gson();
+    private final String baseUrl = "https://datsblack.datsteam.dev/api/";
 
     public GameApiService(String apiKey) {
         this.apiKey = apiKey;
@@ -23,21 +24,21 @@ public class GameApiService {
 
 
     public void registerForDeathMatch() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/deathMatch/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "deathMatch/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Register for DeathMatch: " + response.body());
     }
 
     public void exitDeathMatch() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/deathMatch/exitBattle")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "deathMatch/exitBattle")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Exit DeathMatch: " + response.body());
     }
 
     public void registerForRoyalBattle() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/royalBattle/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "royalBattle/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Register for Royal Battle: " + response.body());
@@ -46,7 +47,7 @@ public class GameApiService {
     public void sendShipCommands(ShipCommand[] commands) throws IOException, InterruptedException {
         String requestBody = createRequestBodyForShipCommands(commands);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/shipCommand")).header("X-API-Key", apiKey).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(requestBody)).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "shipCommand")).header("X-API-Key", apiKey).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(requestBody)).build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Send Ship Commands: " + response.body());
@@ -55,7 +56,7 @@ public class GameApiService {
     public void scanRemotePoint(int x, int y) throws IOException, InterruptedException {
         String json = String.format("{\"x\": %d, \"y\": %d}", x, y);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/longScan")).header("X-API-Key", apiKey).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(json)).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "longScan")).header("X-API-Key", apiKey).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(json)).build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Scan Remote Point: " + response.body());
@@ -83,7 +84,7 @@ public class GameApiService {
     private void scanAndPrint() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://datsblack.datsteam.dev/api/scan"))
+                    .uri(URI.create(baseUrl + "scan"))
                     .header("X-API-Key", apiKey)
                     .build();
 
