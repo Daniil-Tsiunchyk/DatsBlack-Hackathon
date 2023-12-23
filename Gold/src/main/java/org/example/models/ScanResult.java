@@ -11,7 +11,7 @@ public class ScanResult {
     private Error[] errors;
 
     @Data
-    static class ScanData {
+   public static class ScanData {
         private Ship[] myShips;
         private Ship[] enemyShips;
         private Zone zone;
@@ -19,7 +19,7 @@ public class ScanResult {
     }
 
     @Data
-    static class Ship {
+    public static class Ship {
         private int id;
         private int x;
         private int y;
@@ -36,17 +36,31 @@ public class ScanResult {
         private int cannonRadius;
         private int scanRadius;
         private int cannonShootSuccessCount;
+        @Override
+        public String toString() {
+            return String.format("Корабль ID: %d%n" +
+                            "Позиция: (%d, %d)%n" +
+                            "Размер: %d%n" +
+                            "Здоровье: %d/%d%n" +
+                            "Направление: %s%n" +
+                            "Скорость: %d/%d, Мин. скорость: %d, Макс. изменение скорости: %d%n" +
+                            "Время перезарядки пушки: %d, Оставшееся время: %d%n" +
+                            "Радиус пушки: %d, Радиус сканирования: %d%n" +
+                            "Успешных выстрелов: %d",
+                    id, x, y, size, hp, maxHp, direction, speed, maxSpeed, minSpeed, maxChangeSpeed,
+                    cannonCooldown, cannonCooldownLeft, cannonRadius, scanRadius, cannonShootSuccessCount);
+        }
     }
 
     @Data
-    static class Zone {
+    public static class Zone {
         private int x;
         private int y;
         private int radius;
     }
 
     @Data
-    static class Error {
+    public static class Error {
         private String message;
     }
 }

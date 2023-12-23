@@ -18,9 +18,7 @@ public class GameApiService {
 
     public void sendShipCommands(ShipCommand[] commands) throws IOException, InterruptedException {
         String requestBody = createRequestBodyForShipCommands(commands);
-
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUrl + "shipCommand")).header("X-API-Key", apiKey).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(requestBody)).build();
-
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Send Ship Commands: " + response.body());
     }
