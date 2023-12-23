@@ -199,7 +199,6 @@ public class ScriptRegularScanAndBattle {
                     }
                 });
         return enemyShipsList;
-
     }
 
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
@@ -224,12 +223,9 @@ public class ScriptRegularScanAndBattle {
     @AllArgsConstructor
     public static class ShootClass {
 
-
         private int x;
         private int y;
         private int hp;
-
-
 
         @Override
         public boolean equals(Object obj) {
