@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class GameApiService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final String apiKey;
+    private final Gson gson = new Gson();
 
     public GameApiService(String apiKey) {
         this.apiKey = apiKey;
@@ -81,22 +82,20 @@ public class GameApiService {
 
     private void scanAndPrint() {
         try {
-            ScanResult scanResult = scan();
-            System.out.println(scanResult); // Здесь вы можете форматировать вывод, как вам нужно
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://datsblack.datsteam.dev/api/scan"))
+                    .header("X-API-Key", apiKey)
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Ответ сервера: " + response.body());
+
+            ScanResult scanResult = gson.fromJson(response.body(), ScanResult.class);
+            System.out.println(scanResult);
         } catch (IOException | InterruptedException e) {
             System.err.println("Ошибка при выполнении сканирования: " + e.getMessage());
         }
     }
 
-    private ScanResult scan() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/scan")).header("X-API-Key", apiKey).build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        return parseScanResult(response.body());
-    }
-
-    private ScanResult parseScanResult(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, ScanResult.class);
-    }
 }
