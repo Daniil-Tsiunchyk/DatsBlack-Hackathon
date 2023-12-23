@@ -92,6 +92,8 @@ public class ScriptRegularScanAndBattle {
 
         // Стреляем по первому вражескому кораблю в радиусе
         for (ScanResult.Ship myShip : myShips) {
+                if(myShip.getCannonCooldownLeft()==0){
+
 
             Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
                     .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
@@ -108,6 +110,7 @@ public class ScriptRegularScanAndBattle {
                 shootJson.setCannonShoot(closestEnemy.get());
                 resultShootJsonShips.getShips().add(shootJson);
             }
+                }
         }
 
         System.out.println("\n");
