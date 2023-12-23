@@ -104,7 +104,7 @@ public class ScriptMap {
                 int x = ship.getX() / 2;
                 int y = ship.getY() / 2;
                 g.fillOval(x - 5, y - 5, 10, 10);
-                g.drawOval(x - 20, y - 20, 40, 40);
+                g.drawOval(x - 15, y - 15, 30, 30);
             }
         }
 

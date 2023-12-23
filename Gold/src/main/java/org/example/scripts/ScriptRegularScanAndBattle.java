@@ -40,7 +40,7 @@ public class ScriptRegularScanAndBattle {
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-//        System.out.println("Результат: " + parseResponse(response.body()));
+        System.out.println("Результат: " + parseResponse(response.body()));
     }
 
     private static String parseResponse(String responseBody) {
