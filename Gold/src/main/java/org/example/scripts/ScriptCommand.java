@@ -20,7 +20,7 @@ import static org.example.Const.*;
 import static org.example.scripts.ScriptMap.fetchScanResult;
 
 public class ScriptCommand {
-    public static final Integer CHANGE_SPEED = -5; // Изменяемая скорость
+    public static final Integer CHANGE_SPEED = null; // Изменяемая скорость
     public static final Integer ROTATE_ANGLE = null; // Угол поворота
 
     public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class ScriptCommand {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String prettyJson = gson.toJson(scanResult);
 
-            System.out.println("Обработанный результат сканирования: \n" + prettyJson);
+//            System.out.println("Обработанный результат сканирования: \n" + prettyJson);
 
             sendShipCommands(myShips);
         } catch (IOException | InterruptedException e) {

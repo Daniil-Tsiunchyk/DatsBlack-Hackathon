@@ -30,7 +30,7 @@ public class ScriptRegularScanAndBattle {
         // Преобразование объекта в JSON-строку
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(resultShootJsonShips);
-        System.out.println(requestBody);
+//        System.out.println(requestBody);
         // Создание POST-запроса с передачей тела запроса
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "shipCommand"))
@@ -40,7 +40,7 @@ public class ScriptRegularScanAndBattle {
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Результат: " + parseResponse(response.body()));
+//        System.out.println("Результат: " + parseResponse(response.body()));
     }
 
     private static String parseResponse(String responseBody) {
@@ -60,12 +60,12 @@ public class ScriptRegularScanAndBattle {
                     .header("X-API-Key", apiKey)
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Ответ сервера: " + response.body());
+//            System.out.println("Ответ сервера: " + response.body());
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             ScanResult scanResult = gson.fromJson(response.body(), ScanResult.class);
             String prettyJson = gson.toJson(scanResult);
 
-            System.out.println("Обработанный результат сканирования: \n" + prettyJson);
+//            System.out.println("Обработанный результат сканирования: \n" + prettyJson);
 
 
             if (scanResult.getScan().getEnemyShips().length != 0) {
@@ -83,7 +83,7 @@ public class ScriptRegularScanAndBattle {
     }
 
     private static ResultShootJsonShips battle(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
-        System.out.println("Бой начинается!");
+        System.out.println("Орудия готовы!");
 
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
         int speed;
@@ -96,7 +96,7 @@ public class ScriptRegularScanAndBattle {
                     .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
 
             if (closestEnemy.isPresent()) {
-                System.out.println("Бабах!" + myShip.getId());
+                System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
                 ShootJson shootJson = new ShootJson();
                 shootJson.setId(myShip.getId());
                 if (myShip.getSpeed() <= 0) {
@@ -110,7 +110,7 @@ public class ScriptRegularScanAndBattle {
             }
         }
 
-        System.out.println("Бой заканчивается!");
+        System.out.println("\n");
         return resultShootJsonShips;
     }
 
