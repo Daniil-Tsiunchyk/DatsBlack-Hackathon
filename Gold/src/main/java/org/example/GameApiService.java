@@ -7,6 +7,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 // Класс для работы с API
 public class GameApiService {
@@ -17,12 +20,6 @@ public class GameApiService {
         this.apiKey = apiKey;
     }
 
-    public ScanResult scan() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/scan")).header("X-API-Key", apiKey).build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        return parseScanResult(response.body());
-    }
 
     public void registerForDeathMatch() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/deathMatch/registration")).header("X-API-Key", apiKey).POST(HttpRequest.BodyPublishers.noBody()).build();
@@ -75,10 +72,27 @@ public class GameApiService {
         public ShipCommandsWrapper(ShipCommand[] ships) {
             this.ships = ships;
         }
+    }
 
-        private ScanResult parseScanResult(String json) {
-            return null;
+    public void startRegularScans() {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::scanAndPrint, 0, 5, TimeUnit.SECONDS);
+    }
+
+    private void scanAndPrint() {
+        try {
+            ScanResult scanResult = scan();
+            System.out.println(scanResult); // Здесь вы можете форматировать вывод, как вам нужно
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Ошибка при выполнении сканирования: " + e.getMessage());
         }
+    }
+
+    private ScanResult scan() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://datsteam.dev/datsblack/api/scan")).header("X-API-Key", apiKey).build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return parseScanResult(response.body());
     }
 
     private ScanResult parseScanResult(String json) {
