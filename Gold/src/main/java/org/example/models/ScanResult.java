@@ -29,7 +29,25 @@ public class ScanResult {
         private int cannonCooldown;
         private int cannonCooldownLeft;
         private int cannonShootSuccessCount;
-
+        public void move() {
+            switch (direction.toLowerCase()) {
+                case "north":
+                    y -= speed;
+                    break;
+                case "south":
+                    y += speed;
+                    break;
+                case "east":
+                    x += speed;
+                    break;
+                case "west":
+                    x -= speed;
+                    break;
+                default:
+                    System.out.println("Неправильное направление: " + direction);
+                    break;
+            }
+        }
     }
     @Data
     public static class Zone {
