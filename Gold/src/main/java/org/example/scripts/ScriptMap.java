@@ -1,12 +1,15 @@
 package org.example.scripts;
 
+import com.google.gson.Gson;
 import org.example.models.BattleMap.BattleMap;
 import org.example.models.BattleMap.Island;
+import org.example.models.ScanResult;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
@@ -17,7 +20,10 @@ public class ScriptMap {
     public static void main(String[] args) {
         try {
             BattleMap battleMap = fetchBattleMap();
-            SwingUtilities.invokeLater(() -> createAndShowGui(battleMap));
+            ScanResult scanResult = fetchScanResult();
+            ScanResult.Ship[] myShips = scanResult.getScan().getMyShips();
+            ScanResult.Ship[] enemyShips = scanResult.getScan().getEnemyShips();
+            SwingUtilities.invokeLater(() -> createAndShowGui(battleMap, myShips, enemyShips));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -33,10 +39,23 @@ public class ScriptMap {
         return gson.fromJson(response.body(), BattleMap.class);
     }
 
-    private static void createAndShowGui(BattleMap battleMap) {
+    private static ScanResult fetchScanResult() throws IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "scan"))
+                .header("X-API-Key", apiKey)
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Gson gson = new Gson();
+        return gson.fromJson(response.body(), ScanResult.class);
+    }
+
+    private static void createAndShowGui(BattleMap battleMap, ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
         JFrame frame = new JFrame("Battle Map");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new MapDrawer(battleMap));
+        frame.getContentPane().add(new MapDrawer(battleMap, myShips, enemyShips));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -44,10 +63,14 @@ public class ScriptMap {
 
     private static class MapDrawer extends JPanel {
         private final BattleMap battleMap;
+        private final ScanResult.Ship[] myShips;
+        private final ScanResult.Ship[] enemyShips;
         private final int gridSize = 25;
 
-        public MapDrawer(BattleMap battleMap) {
+        public MapDrawer(BattleMap battleMap, ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
             this.battleMap = battleMap;
+            this.myShips = myShips;
+            this.enemyShips = enemyShips;
             setPreferredSize(new Dimension(1000, 1000));
         }
 
@@ -56,9 +79,21 @@ public class ScriptMap {
             super.paintComponent(g);
             drawGrid(g);
             if (battleMap != null) {
+                drawShips(g, myShips, Color.BLUE);
+                drawShips(g, enemyShips, Color.RED);
                 for (Island island : battleMap.getIslands()) {
                     drawIsland(g, island);
                 }
+            }
+        }
+
+
+        private void drawShips(Graphics g, ScanResult.Ship[] ships, Color color) {
+            g.setColor(color);
+            for (ScanResult.Ship ship : ships) {
+                int x = ship.getX() / 2;
+                int y = ship.getY() / 2;
+                g.fillOval(x, y, 10, 10);
             }
         }
 

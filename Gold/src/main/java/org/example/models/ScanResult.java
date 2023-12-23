@@ -1,7 +1,6 @@
 package org.example.models;
 
 import lombok.Data;
-import org.example.scripts.ScriptRegularScan;
 
 @Data
 public class ScanResult {
