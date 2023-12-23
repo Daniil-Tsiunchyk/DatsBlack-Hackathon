@@ -7,6 +7,8 @@ import org.example.models.ScanResult;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,13 +19,32 @@ import java.util.List;
 import static org.example.Const.*;
 
 public class ScriptMap {
+    private static JFrame frame;
+    private static MapDrawer mapDrawer;
+
     public static void main(String[] args) {
+        frame = new JFrame("Battle Map");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        updateMap();
+        Timer timer = new Timer(5000, e -> updateMap());
+        timer.start();
+    }
+
+    private static void updateMap() {
         try {
             BattleMap battleMap = fetchBattleMap();
             ScanResult scanResult = fetchScanResult();
             ScanResult.Ship[] myShips = scanResult.getScan().getMyShips();
             ScanResult.Ship[] enemyShips = scanResult.getScan().getEnemyShips();
-            SwingUtilities.invokeLater(() -> createAndShowGui(battleMap, myShips, enemyShips));
+
+            mapDrawer = new MapDrawer(battleMap, myShips, enemyShips);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(mapDrawer);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+
+            mapDrawer.repaint();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
