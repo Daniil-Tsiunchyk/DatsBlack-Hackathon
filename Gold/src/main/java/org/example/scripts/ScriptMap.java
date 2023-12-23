@@ -95,6 +95,7 @@ public class ScriptMap {
                     drawIsland(g, island);
                 }
             }
+            drawBorder(g);
         }
 
         private void drawShips(Graphics g, ScanResult.Ship[] ships, Color color) {
@@ -130,6 +131,12 @@ public class ScriptMap {
             for (int i = 0; i <= getHeight(); i += gridSize) {
                 g.drawLine(0, i, getWidth(), i);
             }
+        }
+
+        private void drawBorder(Graphics g) {
+            g.setColor(Color.BLACK);
+            ((Graphics2D) g).setStroke(new BasicStroke(3));
+            g.drawRect(0, 0, 1000, 1000);
         }
     }
 }
