@@ -71,7 +71,7 @@ public class ScriptRegularScanAndBattle {
             if (scanResult.getScan().getEnemyShips().length != 0) {
                 System.out.println("Рядом есть вражеские игроки: " + Arrays.toString(scanResult.getScan().getEnemyShips()));
 
-                ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
+                ResultShootJsonShips ships = battle2(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
                 if (!ships.getShips().isEmpty()) {
                     shoootingAPI(ships);
 
@@ -116,10 +116,87 @@ public class ScriptRegularScanAndBattle {
         System.out.println("\n");
         return resultShootJsonShips;
     }
+    private static ResultShootJsonShips battle2(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
+        System.out.println("Орудия готовы!");
+        for (ScanResult.Ship enemyShip : enemyShips) {
+            enemyShip.move();
+        }
+
+        ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
+
+        // Стреляем по первому вражескому кораблю в радиусе
+        for (ScanResult.Ship myShip : myShips) {
+            if(myShip.getCannonCooldownLeft()==0){
+                List<ScanResult.Ship> shootClassList = Arrays.stream(enemyShips)
+                        .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
+                        .sorted(Comparator.comparingInt(ScanResult.Ship::getHp))
+                        .toList();
+                if(!shootClassList.isEmpty()){
+                    Optional < ScanResult.Ship> enemyShipRadius= shootClassList.stream()
+                    /*Optional<ShootClass> closestEnemy*/
+                    .filter(enemyShip -> enemyShip.getHp() > enemyShip.getNumberTarget())
+                            .findFirst();
+                    if(enemyShipRadius.isEmpty()){
+                        enemyShipRadius = shootClassList.stream()
+                                .findFirst();
+
+
+                    }
+
+                    if (enemyShipRadius.isPresent()) {
+                        Optional<ShootClass> closestEnemy=
+                        enemyShipRadius.map(enemyShip -> {
+                            enemyShip.setNumberTarget(enemyShip.getNumberTarget() + 1);
+
+                            int x =enemyShip.getX();
+                            int y = enemyShip.getY();
+                            /*switch (enemyShip.getDirection().toLowerCase()) {
+                                case "north":
+                                    if(myShip.getY()<y){
+
+                                    }
+                                    else{
+
+                                    }
+
+                                    break;
+                                case "south":
+                                    y += speed;
+                                    break;
+                                case "east":
+                                    x += speed;
+                                    break;
+                                case "west":
+                                    x -= speed;
+                                    break;
+                                default:
+                                    System.out.println("Неправильное направление: " + direction);
+                                    break;
+                            }*/
+                            return new ShootClass(x,y, enemyShip.getHp());;
+                        });
+
+
+                        System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
+                        ShootJson shootJson = new ShootJson();
+                        shootJson.setId(myShip.getId());
+
+
+                        shootJson.setCannonShoot(closestEnemy.get());
+                        resultShootJsonShips.getShips().add(shootJson);
+                    }
+                }
+            }
+        }
+
+        System.out.println("\n");
+        return resultShootJsonShips;
+    }
 
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
         return (int) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
+
 
     @Data
     public static class ResultShootJsonShips {
@@ -142,6 +219,7 @@ public class ScriptRegularScanAndBattle {
         private int x;
         private int y;
         private int hp;
+
 
 
         @Override

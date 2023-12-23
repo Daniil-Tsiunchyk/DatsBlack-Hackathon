@@ -29,6 +29,7 @@ public class ScanResult {
         private int cannonCooldown;
         private int cannonCooldownLeft;
         private int cannonShootSuccessCount;
+        private int numberTarget =0;
         public void move() {
             switch (direction.toLowerCase()) {
                 case "north":

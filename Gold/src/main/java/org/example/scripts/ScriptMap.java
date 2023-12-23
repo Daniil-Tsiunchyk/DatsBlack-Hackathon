@@ -28,7 +28,7 @@ public class ScriptMap {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        Timer timer = new Timer(5000, e -> updateMap());
+        Timer timer = new Timer(1000, e -> updateMap());
         timer.start();
         updateMap();
     }
