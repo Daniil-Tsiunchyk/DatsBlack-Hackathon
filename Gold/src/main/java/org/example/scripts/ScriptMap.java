@@ -7,8 +7,6 @@ import org.example.models.ScanResult;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -60,7 +58,7 @@ public class ScriptMap {
         return gson.fromJson(response.body(), BattleMap.class);
     }
 
-    private static ScanResult fetchScanResult() throws IOException, InterruptedException {
+    static ScanResult fetchScanResult() throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "scan"))
