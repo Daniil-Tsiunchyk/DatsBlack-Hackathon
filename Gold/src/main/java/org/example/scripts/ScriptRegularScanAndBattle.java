@@ -72,7 +72,10 @@ public class ScriptRegularScanAndBattle {
                 System.out.println("Рядом есть вражеские игроки: " + Arrays.toString(scanResult.getScan().getEnemyShips()));
 
                 ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
-                shoootingAPI(ships);
+                if(!ships.getShips().isEmpty()){
+                    shoootingAPI(ships);
+
+                }
             }
         } catch (IOException | InterruptedException e) {
             System.err.println("Ошибка при выполнении сканирования: " + e.getMessage());
@@ -124,7 +127,7 @@ public class ScriptRegularScanAndBattle {
     public static class ShootJson {
         private int id;
         private ShootClass cannonShoot;
-        private int changeSpeed =-1;
+        private int changeSpeed;
     }
 
 
