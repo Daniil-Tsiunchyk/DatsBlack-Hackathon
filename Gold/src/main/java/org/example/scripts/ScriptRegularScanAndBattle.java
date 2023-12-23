@@ -173,7 +173,7 @@ public class ScriptRegularScanAndBattle {
                                     System.out.println("Неправильное направление: " + direction);
                                     break;
                             }*/
-                            return new ShootClass(x,y, enemyShip.getHp());;
+                            return new ShootClass(x,y, enemyShip.getHp());
                         });
 
 
