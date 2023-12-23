@@ -21,10 +21,7 @@ public class ScriptMap {
     }
 
     private static BattleMap fetchBattleMap() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(mapUrl))
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(mapUrl)).GET().build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return gson.fromJson(response.body(), BattleMap.class);
@@ -38,11 +35,7 @@ public class ScriptMap {
 
         @Override
         public String toString() {
-            return "BattleMap{" +
-                    "width=" + width +
-                    ", height=" + height +
-                    ", islands=" + islands +
-                    '}';
+            return "BattleMap{" + "width=" + width + ", height=" + height + ", islands=" + islands + '}';
         }
     }
 
@@ -53,10 +46,7 @@ public class ScriptMap {
 
         @Override
         public String toString() {
-            return "Island{" +
-                    "map=" + arrayToString(map) +
-                    ", start=" + start +
-                    '}';
+            return "Island{" + "map=" + arrayToString(map) + ", start=" + start + '}';
         }
 
         private String arrayToString(int[][] array) {
@@ -81,10 +71,7 @@ public class ScriptMap {
 
         @Override
         public String toString() {
-            return "Coordinate{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
+            return "Coordinate{" + "x=" + x + ", y=" + y + '}';
         }
     }
 }
