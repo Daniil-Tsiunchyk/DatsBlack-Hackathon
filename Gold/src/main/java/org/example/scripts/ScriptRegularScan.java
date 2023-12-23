@@ -31,11 +31,10 @@ public class ScriptRegularScan {
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Ответ сервера: " + response.body());
+
             ScanResult scanResult = gson.fromJson(response.body(), ScanResult.class);
-            System.out.println("Привет");
             System.out.println(scanResult);
-            System.out.println("Привет");
-            System.out.println(scanResult.getScan().getEnemyShips().length);
+
             if(scanResult.getScan().getEnemyShips().length!=0){
                 System.out.println("Рядом есть вражеские игроки: "+scanResult.getScan().getEnemyShips());
                 battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
