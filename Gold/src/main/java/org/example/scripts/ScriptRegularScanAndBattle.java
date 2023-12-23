@@ -86,21 +86,23 @@ public class ScriptRegularScanAndBattle {
         int speed;
         // Стреляем по первому вражескому кораблю в радиусе
         for (ScanResult.Ship myShip : myShips) {
-            if(myShip.getSpeed()<=0){
-                speed=0;
-            }
-            else{
-                speed=-1;
-            }
+
             Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
                     .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
                     .min(Comparator.comparingInt(ScanResult.Ship::getHp))
                     .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
-            closestEnemy.get().setChangeSpeed(speed);
+
             if (closestEnemy.isPresent()) {
                 System.out.println("Бабах!");
                 ShootJson shootJson = new ShootJson();
                 shootJson.setId(myShip.getId());
+                if(myShip.getSpeed()<=0){
+                    speed=0;
+                }
+                else{
+                    speed=-1;
+                }
+                shootJson.setChangeSpeed(speed);
                 shootJson.setCannonShoot(closestEnemy.get());
                 resultShootJsonShips.getShips().add(shootJson);
             }
@@ -109,7 +111,6 @@ public class ScriptRegularScanAndBattle {
         System.out.println("Бой заканчивается!");
         return resultShootJsonShips;
     }
-
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
         return (int) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
@@ -123,22 +124,19 @@ public class ScriptRegularScanAndBattle {
     public static class ShootJson {
         private int id;
         private ShootClass cannonShoot;
+        private int changeSpeed =-1;
     }
 
 
     @Data
     @AllArgsConstructor
     public static class ShootClass {
-        public ShootClass(int x, int y, int hp) {
-            this.x = x;
-            this.y = y;
-            this.hp = hp;
-        }
+
 
         private int x;
         private int y;
         private int hp;
-        private int changeSpeed =-1;
+
 
         @Override
         public boolean equals(Object obj) {
