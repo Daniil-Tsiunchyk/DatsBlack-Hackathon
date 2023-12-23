@@ -2,6 +2,8 @@ package org.example.models;
 
 import lombok.Data;
 
+import static org.example.Const.*;
+
 @Data
 public class ScanResult {
     private ScanData scan;
@@ -32,16 +34,16 @@ public class ScanResult {
         private int numberTarget =0;
         public void move() {
             switch (direction.toLowerCase()) {
-                case "north":
-                    y -= speed;
-                    break;
-                case "south":
+                case NORTH:
                     y += speed;
                     break;
-                case "east":
+                case SOUTH:
+                    y -= speed;
+                    break;
+                case EAST:
                     x += speed;
                     break;
-                case "west":
+                case WEST:
                     x -= speed;
                     break;
                 default:

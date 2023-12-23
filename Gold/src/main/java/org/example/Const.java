@@ -11,5 +11,10 @@ public class Const {
     public static final String baseUrl = "https://datsblack.datsteam.dev/api/";
     public static final String mapUrl = "https://datsblack.datsteam.dev/json/map/6586ae233e7ba8.12192069.json";
     public final static int DISTANCE_SCAN = 16;
+    public static final String NORTH = "north";
+    public static final String SOUTH = "south";
+    public static final String EAST = "east";
+    public static final String WEST = "west";
+
 
 }
