@@ -17,7 +17,7 @@ class ScanResult {
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        GameApiService apiService = new GameApiService("ваш API ключ");
+        GameApiService apiService = new GameApiService("a7e670d0-c3ff-4467-96ca-3ffcd79dca89");
         ScanResult scanResult = apiService.scan();
     }
 }
