@@ -1,6 +1,7 @@
 package org.example.models;
 
 import lombok.Data;
+import org.example.scripts.ScriptRegularScan;
 
 @Data
 public class ScanResult {
@@ -31,14 +32,12 @@ public class ScanResult {
         private int cannonShootSuccessCount;
 
     }
-
     @Data
     public static class Zone {
         private int x;
         private int y;
         private int radius;
     }
-
     @Data
     public static class Error {
         private String message;
