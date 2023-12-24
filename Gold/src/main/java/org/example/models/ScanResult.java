@@ -31,7 +31,8 @@ public class ScanResult {
         private int cannonCooldown;
         private int cannonCooldownLeft;
         private int cannonShootSuccessCount;
-        private int numberTarget =0;
+        private int numberTarget = 0;
+
         public void move() {
             switch (direction.toLowerCase()) {
                 case NORTH:
@@ -52,12 +53,14 @@ public class ScanResult {
             }
         }
     }
+
     @Data
     public static class Zone {
         private int x;
         private int y;
         private int radius;
     }
+
     @Data
     public static class Error {
         private String message;
