@@ -128,24 +128,25 @@ public class ScriptMap {
         private void drawShips(Graphics g, ScanResult.Ship[] ships, Color color) {
             g.setColor(color);
             for (ScanResult.Ship ship : ships) {
-                int x = ship.getX() / 2; // Scaling down by a factor of 2
-                int y = ship.getY() / 2; // Scaling down by a factor of 2
+                int x = ship.getX() / 2;
+                int y = ship.getY() / 2;
                 g.fillOval(x - 5, y - 5, 10, 10);
                 g.drawOval(x - 15, y - 15, 30, 30);
             }
         }
 
+
         private void drawIsland(Graphics g, Island island) {
             g.setColor(Color.BLACK);
             int[][] map = island.getMap();
             List<Integer> start = island.getStart();
-            int startX = start.get(0) / 2; // Scaling down by a factor of 2
-            int startY = start.get(1) / 2; // Scaling down by a factor of 2
+            int startX = start.get(0) / 2;
+            int startY = start.get(1) / 2;
 
             for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
                     if (map[i][j] == 1) {
-                        g.fillRect(startX + j / 2, startY + i / 2, 1, 1); // Adjusted scaling for each block
+                        g.fillRect(startX + j / 2, startY + i / 2, 1, 1);
                     }
                 }
             }
@@ -163,6 +164,11 @@ public class ScriptMap {
             g2d.fillOval(centerX - centerSize / 2, centerY - centerSize / 2, centerSize, centerSize);
             int radius = zone.getRadius() / 2;
             g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+            g2d.setColor(Color.ORANGE);
+            radius = radius - THIS_TICK / 2;
+            g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
         }
 
     }
