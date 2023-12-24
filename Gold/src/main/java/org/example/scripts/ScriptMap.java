@@ -35,8 +35,7 @@ public class ScriptMap {
             BattleMap battleMap = fetchBattleMap();
             ScanResult scanResult = fetchScanResult();
             ScanResult.Zone zone = scanResult.getScan().getZone();
-            MapDrawer mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(),
-                    scanResult.getScan().getEnemyShips(), zone);
+            MapDrawer mapDrawer;
             mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(),
                     scanResult.getScan().getEnemyShips(), zone);
 

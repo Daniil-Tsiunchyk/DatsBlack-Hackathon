@@ -66,7 +66,7 @@ public class ScriptRegularScanAndBattle {
             if (scanResult.getScan().getEnemyShips().length != 0) {
                 System.out.println("Рядом есть вражеские игроки: " + Arrays.toString(scanResult.getScan().getEnemyShips()));
 
-                ResultShootJsonShips ships = battle2(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
+                ResultShootJsonShips ships = battle(scanResult.getScan().getMyShips(), scanResult.getScan().getEnemyShips());
                 if (!ships.getShips().isEmpty()) {
                     shoootingAPI(ships);
 
@@ -92,39 +92,6 @@ public class ScriptRegularScanAndBattle {
     }
 
     private static ResultShootJsonShips battle(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
-        System.out.println("Орудия готовы!");
-        for (ScanResult.Ship enemyShip : enemyShips) {
-            enemyShip.move();
-        }
-
-        ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
-
-        // Стреляем по первому вражескому кораблю в радиусе
-        for (ScanResult.Ship myShip : myShips) {
-            if (myShip.getCannonCooldownLeft() == 0) {
-
-
-                Optional<ShootClass> closestEnemy = Arrays.stream(enemyShips)
-                        .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
-                        .min(Comparator.comparingInt(ScanResult.Ship::getHp))
-                        .map(enemyShip -> new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp()));
-
-                if (closestEnemy.isPresent()) {
-
-                    System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
-                    ShootJson shootJson = new ShootJson();
-                    shootJson.setId(myShip.getId());
-                    shootJson.setCannonShoot(closestEnemy.get());
-                    resultShootJsonShips.getShips().add(shootJson);
-                }
-            }
-        }
-
-        System.out.println("\n");
-        return resultShootJsonShips;
-    }
-
-    private static ResultShootJsonShips battle2(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
         System.out.println("Орудия готовы!");
         Arrays.stream(enemyShips).forEach(ScanResult.Ship::move);
         for (ScanResult.Ship enemyShip : enemyShips) {
@@ -214,13 +181,11 @@ public class ScriptRegularScanAndBattle {
     public static class ShootJson {
         private int id;
         private ShootClass cannonShoot;
-
     }
 
     @Data
     @AllArgsConstructor
     public static class ShootClass {
-
         private int x;
         private int y;
         private int hp;
