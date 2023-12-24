@@ -88,7 +88,7 @@ public class ScriptMap {
             this.myShips = myShips;
             this.enemyShips = enemyShips;
             this.zone = zone;
-            setPreferredSize(new Dimension(1000, 1000));
+            setPreferredSize(new Dimension(800, 800));
         }
 
         @Override
@@ -145,7 +145,7 @@ public class ScriptMap {
             for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
                     if (map[i][j] == 1) {
-                        g.fillRect(startX + j / 4, startY + i / 4, 1, 1); // Adjusted scaling for each block
+                        g.fillRect(startX + j / 2, startY + i / 2, 1, 1); // Adjusted scaling for each block
                     }
                 }
             }
@@ -157,17 +157,13 @@ public class ScriptMap {
             g2d.setColor(Color.GREEN);
             g2d.setStroke(new BasicStroke(3));
 
-            int radius = zone.getRadius() / 2;
-            int diameter = radius * 2;
-            int centerX = zone.getX() - radius;
-            int centerY = zone.getY() - radius;
-            g2d.drawOval(centerX, centerY, diameter, diameter);
-
-            g2d.setColor(Color.BLACK);
             int centerSize = 6;
-            g2d.fillOval(zone.getX() / 2 - centerSize / 2, zone.getY() / 2 - centerSize / 2, centerSize, centerSize);
+            int centerX = zone.getX() / 2;
+            int centerY = zone.getY() / 2;
+            g2d.fillOval(centerX - centerSize / 2, centerY - centerSize / 2, centerSize, centerSize);
+            int radius = zone.getRadius() / 2;
+            g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
         }
-
 
     }
 }
