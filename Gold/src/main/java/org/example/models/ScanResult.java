@@ -15,8 +15,6 @@ public class ScanResult {
         private Ship[] myShips;
         private Ship[] enemyShips;
         private Zone zone;
-        private int tick;
-
     }
 
     @Data

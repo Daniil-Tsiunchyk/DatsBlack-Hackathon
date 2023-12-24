@@ -101,6 +101,29 @@ public class ScriptMap {
                 drawZone(g, zone);
             }
             drawBorder(g);
+            displayShipInfoAboveMap(g, myShips);
+        }
+
+        private void displayShipInfoAboveMap(Graphics g, ScanResult.Ship[] ships) {
+            if (ships.length == 0) return;
+
+            String direction = convertDirection(ships[0].getDirection());
+
+            String info = "Скорость: " + ships[0].getSpeed() + ", \nКоличество кораблей: " + ships.length;
+            info += ", \nТекущее направление: " + direction;
+
+            g.setColor(Color.BLACK);
+            g.drawString(info, 10, 20);
+        }
+
+        private String convertDirection(String cardinalDirection) {
+            return switch (cardinalDirection.toLowerCase()) {
+                case "north" -> "вверх";
+                case "south" -> "вниз";
+                case "east" -> "вправо";
+                case "west" -> "влево";
+                default -> "неизвестно";
+            };
         }
 
         private void drawGrid(Graphics g) {

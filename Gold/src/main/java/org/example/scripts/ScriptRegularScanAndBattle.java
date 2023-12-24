@@ -91,7 +91,6 @@ public class ScriptRegularScanAndBattle {
         return "Средняя скорость кораблей: " + averageSpeed + " Направление: " + ships[0].getDirection();
     }
 
-
     private static ResultShootJsonShips battle(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
         System.out.println("Орудия готовы!");
         for (ScanResult.Ship enemyShip : enemyShips) {
@@ -218,7 +217,6 @@ public class ScriptRegularScanAndBattle {
 
     }
 
-
     @Data
     @AllArgsConstructor
     public static class ShootClass {
@@ -226,7 +224,5 @@ public class ScriptRegularScanAndBattle {
         private int x;
         private int y;
         private int hp;
-
-
     }
 }
