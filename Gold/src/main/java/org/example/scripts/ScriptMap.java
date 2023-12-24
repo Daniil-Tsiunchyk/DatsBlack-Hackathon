@@ -205,39 +205,33 @@ public class ScriptMap {
             g2d.setStroke(new BasicStroke(2));
 
             Polygon arrowHead = new Polygon();
-            Rectangle arrowShaft;
 
             switch (direction.toLowerCase()) {
                 case "north":
                     arrowHead.addPoint(x + arrowSize / 2, y);
                     arrowHead.addPoint(x, y + arrowSize);
                     arrowHead.addPoint(x + arrowSize, y + arrowSize);
-                    arrowShaft = new Rectangle(x + arrowSize / 2 - arrowWidth / 2, y + arrowSize, arrowWidth, arrowSize);
                     break;
                 case "south":
                     arrowHead.addPoint(x + arrowSize / 2, y + arrowSize);
                     arrowHead.addPoint(x, y);
                     arrowHead.addPoint(x + arrowSize, y);
-                    arrowShaft = new Rectangle(x + arrowSize / 2 - arrowWidth / 2, y, arrowWidth, arrowSize);
                     break;
                 case "east":
                     arrowHead.addPoint(x + arrowSize, y + arrowSize / 2);
                     arrowHead.addPoint(x, y);
                     arrowHead.addPoint(x, y + arrowSize);
-                    arrowShaft = new Rectangle(x, y + arrowSize / 2 - arrowWidth / 2, arrowSize, arrowWidth);
                     break;
                 case "west":
                     arrowHead.addPoint(x, y + arrowSize / 2);
                     arrowHead.addPoint(x + arrowSize, y);
                     arrowHead.addPoint(x + arrowSize, y + arrowSize);
-                    arrowShaft = new Rectangle(x + arrowSize, y + arrowSize / 2 - arrowWidth / 2, arrowSize, arrowWidth);
                     break;
                 default:
                     return; // In case of an unknown direction
             }
 
             g2d.fillPolygon(arrowHead);
-            g2d.fill(arrowShaft);
         }
     }
 }
