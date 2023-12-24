@@ -94,7 +94,7 @@ public class ScriptRegularScanAndBattle {
         }
 
         double averageSpeed = (double) totalSpeed / ships.length;
-        return "Средняя скорость кораблей: " + averageSpeed;
+        return "Средняя скорость кораблей: " + averageSpeed + " Направление: "+ships[0].getDirection();
     }
 
 
