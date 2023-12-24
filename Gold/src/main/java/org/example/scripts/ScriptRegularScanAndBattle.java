@@ -163,7 +163,7 @@ public class ScriptRegularScanAndBattle {
                             enemyShip.setNumberTarget(enemyShip.getNumberTarget() + 1);
                             return new ShootClass(enemyShip.getX(),enemyShip.getY(), enemyShip.getHp());
                         });
-                        System.out.println("Бабах! Корабль " + myShip.getId() + " стреляет по " + closestEnemy);
+                        System.out.println("Бабах! Корабль c попаданиями " + myShip.getId()+","+myShip.getCannonShootSuccessCount() + " стреляет по " + closestEnemy);
                         ShootJson shootJson = new ShootJson();
                         shootJson.setId(myShip.getId());
                         shootJson.setCannonShoot(closestEnemy.get());
@@ -234,17 +234,6 @@ public class ScriptRegularScanAndBattle {
         private int y;
         private int hp;
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            ShootClass that = (ShootClass) obj;
-            return x == that.x && y == that.y;
-        }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
     }
 }

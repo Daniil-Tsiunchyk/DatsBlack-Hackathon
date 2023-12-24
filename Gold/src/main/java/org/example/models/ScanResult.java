@@ -36,16 +36,16 @@ public class ScanResult {
         public void move() {
             switch (direction.toLowerCase()) {
                 case NORTH:
-                    y += speed;
-                    break;
-                case SOUTH:
                     y -= speed;
                     break;
-                case EAST:
-                    x += speed;
+                case SOUTH:
+                    y += speed;
                     break;
                 case WEST:
                     x -= speed;
+                    break;
+                case EAST:
+                    x += speed;
                     break;
                 default:
                     System.out.println("Неправильное направление: " + direction);
