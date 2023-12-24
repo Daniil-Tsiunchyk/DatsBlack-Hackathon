@@ -157,8 +157,13 @@ public class ScriptMap {
             g2d.setColor(Color.GREEN);
             g2d.setStroke(new BasicStroke(3));
 
-            int diameter = zone.getRadius() * 2;
-            g2d.fillOval(zone.getX() - zone.getRadius(), zone.getY() - zone.getRadius(), diameter, diameter);
+            int centerSize = 6;
+            int centerX = zone.getX() / 2;
+            int centerY = zone.getY() / 2;
+            g2d.fillOval(centerX - centerSize / 2, centerY - centerSize / 2, centerSize, centerSize);
+            int radius = zone.getRadius() / 2;
+            g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
         }
+
     }
 }
