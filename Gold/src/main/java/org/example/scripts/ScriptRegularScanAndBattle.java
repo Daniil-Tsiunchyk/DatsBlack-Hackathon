@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static org.example.Const.*;
 
@@ -41,11 +40,6 @@ public class ScriptRegularScanAndBattle {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 //        System.out.println("Результат: " + parseResponse(response.body()));
-    }
-
-    private static String parseResponse(String responseBody) {
-        ScriptRegister.Response response = gson.fromJson(responseBody, ScriptRegister.Response.class);
-        return response.toString();
     }
 
     public static void startRegularScans() {
@@ -94,7 +88,7 @@ public class ScriptRegularScanAndBattle {
         }
 
         double averageSpeed = (double) totalSpeed / ships.length;
-        return "Средняя скорость кораблей: " + averageSpeed + " Направление: "+ships[0].getDirection();
+        return "Средняя скорость кораблей: " + averageSpeed + " Направление: " + ships[0].getDirection();
     }
 
 
@@ -130,55 +124,55 @@ public class ScriptRegularScanAndBattle {
         System.out.println("\n");
         return resultShootJsonShips;
     }
+
     private static ResultShootJsonShips battle2(ScanResult.Ship[] myShips, ScanResult.Ship[] enemyShips) {
         System.out.println("Орудия готовы!");
         Arrays.stream(enemyShips).forEach(ScanResult.Ship::move);
         for (ScanResult.Ship enemyShip : enemyShips) {
-            System.out.println("Стапые координты: (x,у) и скорость,направление"+enemyShip.getX()+","+enemyShip.getY()+","+enemyShip.getSpeed()+","+enemyShip.getDirection());
+            System.out.println("Стапые координты: (x,у) и скорость,направление" + enemyShip.getX() + "," + enemyShip.getY() + "," + enemyShip.getSpeed() + "," + enemyShip.getDirection());
             enemyShip.move();
-            System.out.println("Новые координты: (x,у) "+enemyShip.getX()+","+enemyShip.getY());
+            System.out.println("Новые координты: (x,у) " + enemyShip.getX() + "," + enemyShip.getY());
         }
         ResultShootJsonShips resultShootJsonShips = new ResultShootJsonShips();
 
         for (ScanResult.Ship myShip : myShips) {
-            if(myShip.getCannonCooldownLeft()==0){
-                List<ScanResult.Ship> enemyShipsList = getNewCoordinatesInEnemyArray(myShip,enemyShips);
+            if (myShip.getCannonCooldownLeft() == 0) {
+                List<ScanResult.Ship> enemyShipsList = getNewCoordinatesInEnemyArray(myShip, enemyShips);
                 List<ScanResult.Ship> shootClassList = enemyShipsList.stream()
                         .filter(enemyShip -> calculateDistance(myShip.getX(), myShip.getY(), enemyShip.getX(), enemyShip.getY()) <= DISTANCE_SCAN)
                         .sorted(Comparator.comparingInt(ScanResult.Ship::getHp))
                         .toList();
-                System.out.println("--------Корабль " + myShip.getId() + " может стрелять по " + shootClassList+"------------");
+                System.out.println("--------Корабль " + myShip.getId() + " может стрелять по " + shootClassList + "------------");
 
-                if(!shootClassList.isEmpty()){
-                    Optional < ScanResult.Ship> enemyShipRadius= shootClassList.stream()
-                    .filter(enemyShip -> enemyShip.getHp() > enemyShip.getNumberTarget())
+                if (!shootClassList.isEmpty()) {
+                    Optional<ScanResult.Ship> enemyShipRadius = shootClassList.stream()
+                            .filter(enemyShip -> enemyShip.getHp() > enemyShip.getNumberTarget())
                             .findFirst();
-                    if(enemyShipRadius.isEmpty()){
+                    if (enemyShipRadius.isEmpty()) {
                         enemyShipRadius = shootClassList.stream()
                                 .findFirst();
                     }
-                    if (enemyShipRadius.isPresent()) {
-                        Optional<ShootClass> closestEnemy=
-                        enemyShipRadius.map(enemyShip -> {
-                            enemyShip.setNumberTarget(enemyShip.getNumberTarget() + 1);
-                            return new ShootClass(enemyShip.getX(),enemyShip.getY(), enemyShip.getHp());
-                        });
-                        System.out.println("Бабах! Корабль c попаданиями " + myShip.getId()+","+myShip.getCannonShootSuccessCount() + " стреляет по " + closestEnemy);
-                        ShootJson shootJson = new ShootJson();
-                        shootJson.setId(myShip.getId());
-                        shootJson.setCannonShoot(closestEnemy.get());
-                        resultShootJsonShips.getShips().add(shootJson);
-                    }
+                    Optional<ShootClass> closestEnemy =
+                            enemyShipRadius.map(enemyShip -> {
+                                enemyShip.setNumberTarget(enemyShip.getNumberTarget() + 1);
+                                return new ShootClass(enemyShip.getX(), enemyShip.getY(), enemyShip.getHp());
+                            });
+                    System.out.println("Бабах! Корабль c попаданиями " + myShip.getId() + "," + myShip.getCannonShootSuccessCount() + " стреляет по " + closestEnemy);
+                    ShootJson shootJson = new ShootJson();
+                    shootJson.setId(myShip.getId());
+                    shootJson.setCannonShoot(closestEnemy.get());
+                    resultShootJsonShips.getShips().add(shootJson);
                 }
             }
         }
         System.out.println("\n");
         return resultShootJsonShips;
     }
-    private static  List<ScanResult.Ship> getNewCoordinatesInEnemyArray(ScanResult.Ship myShip, ScanResult.Ship[] enemyShips){
+
+    private static List<ScanResult.Ship> getNewCoordinatesInEnemyArray(ScanResult.Ship myShip, ScanResult.Ship[] enemyShips) {
         List<ScanResult.Ship> enemyShipsList = new ArrayList<>(List.of(enemyShips));
-        enemyShipsList.stream()
-                .forEach(enemy->{
+        enemyShipsList
+                .forEach(enemy -> {
                    /* switch (enemy.getDirection().toLowerCase()) {
                         case NORTH:
                             if(myShip.getY()>enemy.getY()){
@@ -209,9 +203,8 @@ public class ScriptRegularScanAndBattle {
     }
 
     private static int calculateDistance(int x1, int y1, int x2, int y2) {
-        return (int) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
-
 
     @Data
     public static class ResultShootJsonShips {

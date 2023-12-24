@@ -1,15 +1,13 @@
 package org.example.scripts;
 
 import com.google.gson.Gson;
-import org.example.models.BattleMap.BattleMap;
-import org.example.models.BattleMap.Island;
+import org.example.models.BattleMap;
 import org.example.models.ScanResult;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
@@ -18,7 +16,6 @@ import static org.example.Const.*;
 
 public class ScriptMap {
     private static JFrame frame;
-    private static MapDrawer mapDrawer;
 
     public static void main(String[] args) {
         frame = new JFrame("Battle Map");
@@ -38,7 +35,7 @@ public class ScriptMap {
             BattleMap battleMap = fetchBattleMap();
             ScanResult scanResult = fetchScanResult();
             ScanResult.Zone zone = scanResult.getScan().getZone();
-            mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(),
+            MapDrawer mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(),
                     scanResult.getScan().getEnemyShips(), zone);
             mapDrawer = new MapDrawer(battleMap, scanResult.getScan().getMyShips(),
                     scanResult.getScan().getEnemyShips(), zone);
@@ -63,7 +60,6 @@ public class ScriptMap {
     }
 
     static ScanResult fetchScanResult() throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "scan"))
                 .header("X-API-Key", apiKey)
@@ -79,7 +75,6 @@ public class ScriptMap {
         private final BattleMap battleMap;
         private final ScanResult.Ship[] myShips;
         private final ScanResult.Ship[] enemyShips;
-        private final int gridSize = 25;
         private final ScanResult.Zone zone;
 
         public MapDrawer(BattleMap battleMap, ScanResult.Ship[] myShips,
@@ -98,7 +93,7 @@ public class ScriptMap {
             if (battleMap != null) {
                 drawShips(g, myShips, Color.BLUE);
                 drawShips(g, enemyShips, Color.RED);
-                for (Island island : battleMap.getIslands()) {
+                for (BattleMap.Island island : battleMap.getIslands()) {
                     drawIsland(g, island);
                 }
             }
@@ -108,9 +103,9 @@ public class ScriptMap {
             drawBorder(g);
         }
 
-
         private void drawGrid(Graphics g) {
             g.setColor(Color.GRAY);
+            int gridSize = 25;
             for (int i = 0; i <= getWidth(); i += gridSize) {
                 g.drawLine(i, 0, i, getHeight());
             }
@@ -135,8 +130,7 @@ public class ScriptMap {
             }
         }
 
-
-        private void drawIsland(Graphics g, Island island) {
+        private void drawIsland(Graphics g, BattleMap.Island island) {
             g.setColor(Color.BLACK);
             int[][] map = island.getMap();
             List<Integer> start = island.getStart();
@@ -168,8 +162,6 @@ public class ScriptMap {
             g2d.setColor(Color.ORANGE);
             radius = radius - THIS_TICK / 2;
             g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
-
         }
-
     }
 }

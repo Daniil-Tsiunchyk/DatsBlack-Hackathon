@@ -2,20 +2,18 @@ package org.example.scripts;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.models.ScanResult;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.CommonScripts.parseResponse;
 import static org.example.Const.*;
 import static org.example.scripts.ScriptMap.fetchScanResult;
 
@@ -29,9 +27,8 @@ public class ScriptCommand {
             ScanResult scanResult = fetchScanResult();
             ScanResult.Ship[] myShips = scanResult.getScan().getMyShips();
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String prettyJson = gson.toJson(scanResult);
-
+//            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//            String prettyJson = gson.toJson(scanResult);
 //            System.out.println("Обработанный результат сканирования: \n" + prettyJson);
 
             sendShipCommands(myShips);
@@ -66,14 +63,8 @@ public class ScriptCommand {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        HttpClient httpClient = HttpClient.newHttpClient();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Результат: " + parseResponse(response.body()));
-    }
-
-    private static String parseResponse(String responseBody) {
-        ScriptRegister.Response response = gson.fromJson(responseBody, ScriptRegister.Response.class);
-        return response.toString();
     }
 
     @Data
