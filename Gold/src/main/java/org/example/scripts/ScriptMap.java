@@ -195,10 +195,10 @@ public class ScriptMap {
         private void drawDirectionArrow(Graphics g, String direction) {
             int arrowSize = 40; // Size of the arrow head
             int arrowWidth = 10; // Width of the arrow shaft
-            int margin = 10; // Margin from the bottom right corner
-            int shift = 10; // Amount to shift the arrow left and up
+            int margin = 10; // Margin from the top right corner
+            int shift = 10; // Amount to shift the arrow left and down
             int x = getWidth() - arrowSize - arrowWidth - margin - shift;
-            int y = getHeight() - arrowSize - arrowWidth - margin - shift;
+            int y = margin + shift; // Set y based on margin from top
 
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(Color.RED);
