@@ -89,6 +89,7 @@ public class ScriptMap {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
             drawGrid(g);
             if (battleMap != null) {
                 drawShips(g, myShips, Color.BLUE);
@@ -102,6 +103,10 @@ public class ScriptMap {
             }
             drawBorder(g);
             displayShipInfoAboveMap(g, myShips);
+
+            if (myShips.length > 0) {
+                drawDirectionArrow(g, myShips[0].getDirection());
+            }
         }
 
         private void displayShipInfoAboveMap(Graphics g, ScanResult.Ship[] ships) {
@@ -185,6 +190,54 @@ public class ScriptMap {
             g2d.setColor(Color.ORANGE);
             radius = radius - THIS_TICK / 2;
             g2d.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+        }
+
+        private void drawDirectionArrow(Graphics g, String direction) {
+            int arrowSize = 40; // Size of the arrow head
+            int arrowWidth = 10; // Width of the arrow shaft
+            int margin = 10; // Margin from the bottom right corner
+            int shift = 10; // Amount to shift the arrow left and up
+            int x = getWidth() - arrowSize - arrowWidth - margin - shift;
+            int y = getHeight() - arrowSize - arrowWidth - margin - shift;
+
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(Color.RED);
+            g2d.setStroke(new BasicStroke(2));
+
+            Polygon arrowHead = new Polygon();
+            Rectangle arrowShaft;
+
+            switch (direction.toLowerCase()) {
+                case "north":
+                    arrowHead.addPoint(x + arrowSize / 2, y);
+                    arrowHead.addPoint(x, y + arrowSize);
+                    arrowHead.addPoint(x + arrowSize, y + arrowSize);
+                    arrowShaft = new Rectangle(x + arrowSize / 2 - arrowWidth / 2, y + arrowSize, arrowWidth, arrowSize);
+                    break;
+                case "south":
+                    arrowHead.addPoint(x + arrowSize / 2, y + arrowSize);
+                    arrowHead.addPoint(x, y);
+                    arrowHead.addPoint(x + arrowSize, y);
+                    arrowShaft = new Rectangle(x + arrowSize / 2 - arrowWidth / 2, y, arrowWidth, arrowSize);
+                    break;
+                case "east":
+                    arrowHead.addPoint(x + arrowSize, y + arrowSize / 2);
+                    arrowHead.addPoint(x, y);
+                    arrowHead.addPoint(x, y + arrowSize);
+                    arrowShaft = new Rectangle(x, y + arrowSize / 2 - arrowWidth / 2, arrowSize, arrowWidth);
+                    break;
+                case "west":
+                    arrowHead.addPoint(x, y + arrowSize / 2);
+                    arrowHead.addPoint(x + arrowSize, y);
+                    arrowHead.addPoint(x + arrowSize, y + arrowSize);
+                    arrowShaft = new Rectangle(x + arrowSize, y + arrowSize / 2 - arrowWidth / 2, arrowSize, arrowWidth);
+                    break;
+                default:
+                    return; // In case of an unknown direction
+            }
+
+            g2d.fillPolygon(arrowHead);
+            g2d.fill(arrowShaft);
         }
     }
 }
