@@ -172,7 +172,7 @@ public class ScriptRegularScanAndBattle {
         List<ScanResult.Ship> enemyShipsList = new ArrayList<>(List.of(enemyShips));
         enemyShipsList.stream()
                 .forEach(enemy->{
-                    switch (enemy.getDirection().toLowerCase()) {
+                   /* switch (enemy.getDirection().toLowerCase()) {
                         case NORTH:
                             if(myShip.getY()>enemy.getY()){
                                 enemy.setY(enemy.getY()+enemy.getSize());
@@ -196,7 +196,7 @@ public class ScriptRegularScanAndBattle {
                         default:
                             System.out.println("Неправильное направление: " + enemy.getDirection());
                             break;
-                    }
+                    }*/
                 });
         return enemyShipsList;
     }
